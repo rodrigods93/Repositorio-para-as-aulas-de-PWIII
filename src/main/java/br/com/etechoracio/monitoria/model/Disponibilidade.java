@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -42,7 +43,7 @@ public class Disponibilidade {
 	@Column(name = "HR_FIM")
 	private Date horaFim;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_USUARIO")/*Join Column é utilizado quando existe um relacionamento entre tabelas */
 	private Usuario usuario; /*Existem 4 tipos de relacionamento para FK OneToOne,OneToMany,ManyToOne
 	 e ManytoMany*/
