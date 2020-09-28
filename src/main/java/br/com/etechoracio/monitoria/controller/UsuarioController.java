@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.etechoracio.monitoria.model.Usuario;
+import br.com.etechoracio.monitoria.model.business.UsuarioBusiness;
 import br.com.etechoracio.monitoria.model.dao.UsuarioDAO;
+import br.com.etechoracio.monitoria.model.dto.UsuarioDTO;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -25,6 +27,9 @@ public class UsuarioController {
 	//O framework fica responsavel por instanciar o objeto não sendo necessario que eu faça o processo.
 	private UsuarioDAO usuarioDAO; // o usuarioDAO minusculo é um objeto.
 	
+	@Autowired
+	private UsuarioBusiness usuarioBusiness;
+	
 	@PostMapping // ele explicita o modo que vai ser enviado no caso sera o POST
 	public ResponseEntity<Usuario> inserir(@RequestBody Usuario usr) {//O requestbody indica que eu vou recener o usuario
 		//no corpo da requisição.
@@ -33,8 +38,8 @@ public class UsuarioController {
 	}
 	
 	@GetMapping
-	public List<Usuario> listarTodos(){
-		return usuarioDAO.findAll();
+	public List<UsuarioDTO> listarTodos(){
+		return usuarioBusiness.listarTodos();
 	}
 	
 	@PutMapping("/{id}")
