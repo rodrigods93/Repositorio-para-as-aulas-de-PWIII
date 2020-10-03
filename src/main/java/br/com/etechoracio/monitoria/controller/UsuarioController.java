@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+//import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +52,7 @@ public class UsuarioController {
 		
 	}
 	
-	@DeleteMapping("/{id}")
+	/*@DeleteMapping("/{id}")
 	public ResponseEntity<Usuario> deletar(@PathVariable Long id) {
 		
 		if(usuarioDAO.existsById(id)) {
@@ -61,11 +61,11 @@ public class UsuarioController {
 		}
 		return ResponseEntity.noContent().build();
 		
-	}
+	}*/
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Usuario> buscarPorID(@PathVariable Long id){
-		Optional<Usuario> resultado = usuarioDAO.findById(id);
+	public ResponseEntity<UsuarioDTO> buscarPorID(@PathVariable Long id){
+		Optional<UsuarioDTO> resultado = usuarioBusiness.buscarPorID(id);
 		if(resultado.isPresent()) {
 			return ResponseEntity.ok(resultado.get());
 		}
