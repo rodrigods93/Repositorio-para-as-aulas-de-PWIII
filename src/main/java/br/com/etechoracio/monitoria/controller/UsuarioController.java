@@ -3,6 +3,8 @@ package br.com.etechoracio.monitoria.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,10 +33,12 @@ public class UsuarioController {
 	private UsuarioBusiness usuarioBusiness;
 	
 	@PostMapping // ele explicita o modo que vai ser enviado no caso sera o POST
-	public ResponseEntity<Usuario> inserir(@RequestBody Usuario usr) {//O requestbody indica que eu vou recener o usuario
+	public ResponseEntity<UsuarioDTO> inserir(@RequestBody @Valid UsuarioDTO usr) {//O requestbody indica que eu vou recener o usuario
 		//no corpo da requisição.
-		Usuario salvo = usuarioDAO.save(usr);
-		return ResponseEntity.ok(salvo);
+		//Usuario salvo = usuarioDAO.save(usr);
+		UsuarioDTO resultado = usuarioBusiness.inserir(usr);
+		
+		return ResponseEntity.ok(resultado);
 	}
 	
 	@GetMapping

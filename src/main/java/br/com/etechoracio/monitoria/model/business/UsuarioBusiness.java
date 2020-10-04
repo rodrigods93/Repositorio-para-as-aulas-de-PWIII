@@ -10,9 +10,19 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.etechoracio.monitoria.model.Aula;
+import br.com.etechoracio.monitoria.model.Disciplina;
+import br.com.etechoracio.monitoria.model.Disponibilidade;
 //import org.springframework.web.bind.annotation.PathVariable;
 import br.com.etechoracio.monitoria.model.Usuario;
+import br.com.etechoracio.monitoria.model.dao.AulaDAO;
+import br.com.etechoracio.monitoria.model.dao.DisciplinaDAO;
+import br.com.etechoracio.monitoria.model.dao.DisponibilidadeDAO;
 import br.com.etechoracio.monitoria.model.dao.UsuarioDAO;
+import br.com.etechoracio.monitoria.model.dto.DisciplinaDTO;
+import br.com.etechoracio.monitoria.model.dto.DisponibilidadeDTO;
 import br.com.etechoracio.monitoria.model.dto.UsuarioDTO;
 
  // Informa ao sistema que essa é uma camada de serviço.
@@ -24,7 +34,51 @@ public class UsuarioBusiness {
 	private UsuarioDAO usuarioDAO;
 	
 	@Autowired
+	private AulaDAO aulaDAO;
+	
+	@Autowired
+	private DisciplinaDAO disciplinaDAO;
+	
+	@Autowired
+	private DisponibilidadeDAO disponibilidadeDAO;
+	
+	@Autowired
 	private ModelMapper mapper;
+	
+	@Transactional
+	public UsuarioDTO inserir(UsuarioDTO usuarioDTO){
+		Usuario salvar = mapper.map(usuarioDTO, Usuario.class);
+		usuarioDAO.save(salvar);
+		
+		Disciplina disciplina = disciplinaDAO.getOne(usuarioDTO.getDisciplina().getId());
+		
+		Aula aula = Aula.builder().disciplina(disciplina).usuario(salvar).build();
+		
+		aulaDAO.save(aula);
+		
+		List<Disponibilidade> disponibilidades = usuarioDTO.getDisponibilidades().stream()
+				.map(e -> {
+				Disponibilidade resultado = mapper.map(e, Disponibilidade.class);
+				resultado.setUsuario(salvar);
+				return resultado;
+				})
+				.collect(Collectors.toList());
+		
+		disponibilidadeDAO.saveAll(disponibilidades);
+		
+		UsuarioDTO resultado = mapper.map(salvar, UsuarioDTO.class);
+		DisciplinaDTO disciplinaResultado = mapper.map(disciplina, DisciplinaDTO.class);
+		
+		List<DisponibilidadeDTO> disponibilidadesResultado = disponibilidades.stream()
+				.map(e -> mapper.map(e, DisponibilidadeDTO.class))
+				.collect(Collectors.toList());
+		
+		resultado.setDisciplina(disciplinaResultado);
+		resultado.setDisponibilidades(disponibilidadesResultado);
+		return resultado;
+	
+		
+	}
 	
 	public List<UsuarioDTO> listarTodos(){
 		List<Usuario> resposta = usuarioDAO.findAll();
