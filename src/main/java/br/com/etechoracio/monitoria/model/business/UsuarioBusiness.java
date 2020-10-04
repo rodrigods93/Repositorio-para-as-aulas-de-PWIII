@@ -47,6 +47,19 @@ public class UsuarioBusiness {
 	
 	@Transactional
 	public UsuarioDTO inserir(UsuarioDTO usuarioDTO){
+		
+		
+		/*Usuario existente = usuarioDAO.findByWhatsapp(usuarioDTO.getWhatsapp());
+		if(existente != null) {
+			throw new IllegalArgumentException("Usuario ja cadastrado para esse whatsapp.");
+		}*/
+		
+		Optional<Usuario> existente = usuarioDAO.findByWhatsapp(usuarioDTO.getWhatsapp());
+		if(existente.isPresent()) {
+			throw new IllegalArgumentException("Usuario ja cadastrado para esse whatsapp.");
+		}
+		
+		
 		Usuario salvar = mapper.map(usuarioDTO, Usuario.class);
 		usuarioDAO.save(salvar);
 		
